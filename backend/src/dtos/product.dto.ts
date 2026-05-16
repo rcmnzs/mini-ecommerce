@@ -5,6 +5,8 @@ export interface CreateProductDTO {
   description?: string;
   price: number;
   stock?: number;
+  category: string;
+  active?: boolean;
 }
 
 export interface UpdateProductDTO {
@@ -12,6 +14,8 @@ export interface UpdateProductDTO {
   description?: string;
   price?: number;
   stock?: number;
+  category?: string;
+  active?: boolean;
 }
 
 // ─── Response DTOs ────────────────────────────────────────────────────────────
@@ -22,6 +26,8 @@ export interface ProductResponseDTO {
   description: string | null;
   price: number;
   stock: number;
+  category: string;
+  active: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

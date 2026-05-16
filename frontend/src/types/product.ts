@@ -4,6 +4,8 @@ export interface Product {
   description: string | null;
   price: number;
   stock: number;
+  category: string;
+  active: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -13,6 +15,8 @@ export interface CreateProductPayload {
   description?: string;
   price: number;
   stock?: number;
+  category: string;
+  active?: boolean;
 }
 
 export interface UpdateProductPayload {
@@ -20,4 +24,6 @@ export interface UpdateProductPayload {
   description?: string;
   price?: number;
   stock?: number;
+  category?: string;
+  active?: boolean;
 }

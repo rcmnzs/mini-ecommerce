@@ -8,12 +8,14 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
+  id        String      @id @default(uuid())
   name      String
-  email     String   @unique
+  email     String      @unique
   password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role      Role        @default(USER)
+  active    Boolean     @default(true)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 
   @@map("users")
 }
@@ -24,8 +26,15 @@ model Product {
   description String?
   price       Float
   stock       Int      @default(0)
+  category    String
+  active      Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@map("products")
+}
+
+enum Role {
+  ADMIN
+  USER
 }
