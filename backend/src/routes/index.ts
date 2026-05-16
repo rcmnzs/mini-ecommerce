@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import userRouter from './userRoutes';
 
 const router = Router();
 
@@ -10,5 +11,9 @@ router.get('/health', (_req: Request, res: Response) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+// ─── Resources ────────────────────────────────────────────────────────────────
+
+router.use('/users', userRouter);
 
 export default router;

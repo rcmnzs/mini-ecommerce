@@ -5,7 +5,7 @@ const config: Config = {
   testEnvironment: 'node',
   testMatch: ['**/tests/**/*.test.ts'],
   collectCoverageFrom: ['src/**/*.ts'],
-  coveragePathIgnorePatterns: ['src/server.ts', 'src/config/database.ts'],
+  coveragePathIgnorePatterns: ['src/index.ts', 'src/config/database.ts'],
 };
 
 export default config;
