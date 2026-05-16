@@ -1,9 +1,16 @@
 import 'dotenv/config';
 import express from 'express';
+import cors from 'cors';
 import router from './routes/index';
 import { errorHandler } from './middlewares/errorHandler';
 
 const app = express();
+
+// ─── CORS ─────────────────────────────────────────────────────────────────────
+
+app.use(cors({
+  origin: process.env.FRONTEND_URL || '*',
+}));
 
 // ─── Middlewares ──────────────────────────────────────────────────────────────
 
