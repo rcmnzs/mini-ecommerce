@@ -36,6 +36,7 @@ const mockProduct = {
   description: 'Tênis esportivo',
   price: 299.9,
   stock: 10,
+  category: 'Shoes',
   createdAt: new Date(),
   updatedAt: new Date(),
 };
@@ -52,6 +53,7 @@ describe('createProduct', () => {
       name: 'Tênis Nike',
       price: 299.9,
       stock: 10,
+      category: 'Shoes',
     });
 
     expect(result.id).toBe('prod-uuid-123');
@@ -66,7 +68,7 @@ describe('createProduct', () => {
       stock: 0,
     });
 
-    const result = await createProduct({ name: 'Produto', price: 10 });
+    const result = await createProduct({ name: 'Produto', price: 10, category: 'General' });
 
     expect(result.description).toBeNull();
     expect(result.stock).toBe(0);
@@ -74,25 +76,25 @@ describe('createProduct', () => {
 
   it('deve lançar ValidationException quando name faltar', async () => {
     await expect(
-      createProduct({ name: '', price: 100 }),
+      createProduct({ name: '', price: 100, category: 'General' }),
     ).rejects.toThrow(ValidationException);
   });
 
   it('deve lançar ValidationException quando price faltar', async () => {
     await expect(
-      createProduct({ name: 'Produto', price: undefined as unknown as number }),
+      createProduct({ name: 'Produto', price: undefined as unknown as number, category: 'General' }),
     ).rejects.toThrow(ValidationException);
   });
 
   it('deve lançar ValidationException quando price for negativo', async () => {
     await expect(
-      createProduct({ name: 'Produto', price: -10 }),
+      createProduct({ name: 'Produto', price: -10, category: 'General' }),
     ).rejects.toThrow(ValidationException);
   });
 
   it('deve lançar ValidationException quando stock for negativo', async () => {
     await expect(
-      createProduct({ name: 'Produto', price: 10, stock: -1 }),
+      createProduct({ name: 'Produto', price: 10, stock: -1, category: 'General' }),
     ).rejects.toThrow(ValidationException);
   });
 });
