@@ -1,24 +1,4 @@
-# Dependencies
-node_modules/
-
-# Build
-dist/
-build/
-
-# Environment
+node_modules
+dist
+.vercel
 .env
-
-# Logs
-*.log
-npm-debug.log*
-
-# Coverage
-coverage/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
