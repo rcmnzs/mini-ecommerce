@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs';
 import prisma from '../config/database';
 import {
   ConflictException,
@@ -61,8 +62,10 @@ export async function createUser(data: CreateUserDTO): Promise<UserResponseDTO> 
     throw new ConflictException('E-mail já cadastrado', `O e-mail ${email} já está em uso`);
   }
 
+  const hashedPassword = await bcrypt.hash(password, 10);
+
   const user = await prisma.user.create({
-    data: { name, email, password, role, active },
+    data: { name, email, password: hashedPassword, role, active },
   });
 
   return toResponseDTO(user);
@@ -112,12 +115,14 @@ export async function updateUser(id: string, data: UpdateUserDTO): Promise<UserR
     }
   }
 
+  const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
+
   const updated = await prisma.user.update({
     where: { id },
     data: {
       ...(name !== undefined && { name }),
       ...(email !== undefined && { email }),
-      ...(password !== undefined && { password }),
+      ...(hashedPassword !== undefined && { password: hashedPassword }),
       ...(role !== undefined && { role }),
       ...(active !== undefined && { active }),
     },

@@ -27,6 +27,8 @@ const mockProduct = {
   description: 'Tênis esportivo',
   price: 299.9,
   stock: 10,
+  category: 'Calçados',
+  active: true,
   createdAt: new Date(),
   updatedAt: new Date(),
 };
@@ -43,6 +45,7 @@ describe('POST /api/v1/products', () => {
       name: 'Tênis Nike',
       price: 299.9,
       stock: 10,
+      category: 'Calçados',
     });
 
     expect(res.status).toBe(201);
@@ -53,6 +56,7 @@ describe('POST /api/v1/products', () => {
   it('deve retornar 400 quando name faltar', async () => {
     const res = await request(app).post('/api/v1/products').send({
       price: 100,
+      category: 'Calçados',
     });
 
     expect(res.status).toBe(400);
@@ -62,6 +66,17 @@ describe('POST /api/v1/products', () => {
   it('deve retornar 400 quando price faltar', async () => {
     const res = await request(app).post('/api/v1/products').send({
       name: 'Produto',
+      category: 'Calçados',
+    });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error.code).toBe('VALIDATION_ERROR');
+  });
+
+  it('deve retornar 400 quando category faltar', async () => {
+    const res = await request(app).post('/api/v1/products').send({
+      name: 'Produto',
+      price: 100,
     });
 
     expect(res.status).toBe(400);
@@ -72,6 +87,7 @@ describe('POST /api/v1/products', () => {
     const res = await request(app).post('/api/v1/products').send({
       name: 'Produto',
       price: -10,
+      category: 'Calçados',
     });
 
     expect(res.status).toBe(400);
@@ -83,6 +99,7 @@ describe('POST /api/v1/products', () => {
       name: 'Produto',
       price: 10,
       stock: -1,
+      category: 'Calçados',
     });
 
     expect(res.status).toBe(400);

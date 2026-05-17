@@ -17,6 +17,13 @@ jest.mock('../../../src/config/database', () => ({
   },
 }));
 
+// ─── Mock do bcryptjs ─────────────────────────────────────────────────────────
+
+jest.mock('bcryptjs', () => ({
+  hash: jest.fn().mockResolvedValue('hashed_password'),
+  compare: jest.fn().mockResolvedValue(true),
+}));
+
 const prismaMock = prisma as jest.Mocked<typeof prisma>;
 
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
@@ -25,7 +32,9 @@ const mockUser = {
   id: 'uuid-123',
   name: 'João Silva',
   email: 'joao@email.com',
-  password: 'senha123',
+  password: 'hashed_password',
+  role: 'USER',
+  active: true,
   createdAt: new Date(),
   updatedAt: new Date(),
 };
@@ -48,6 +57,19 @@ describe('createUser', () => {
     expect(result.id).toBe('uuid-123');
     expect(result.email).toBe('joao@email.com');
     expect(result).not.toHaveProperty('password');
+  });
+
+  it('deve salvar a senha com hash no banco', async () => {
+    const bcrypt = require('bcryptjs');
+    (prismaMock.user.findUnique as jest.Mock).mockResolvedValue(null);
+    (prismaMock.user.create as jest.Mock).mockResolvedValue(mockUser);
+
+    await createUser({ name: 'João', email: 'joao@email.com', password: 'senha123' });
+
+    expect(bcrypt.hash).toHaveBeenCalledWith('senha123', 10);
+    expect(prismaMock.user.create).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ password: 'hashed_password' }) }),
+    );
   });
 
   it('deve lançar ValidationException quando campos obrigatórios faltarem', async () => {
@@ -150,6 +172,29 @@ describe('updateUser', () => {
 
     expect(result.name).toBe('João Atualizado');
     expect(result).not.toHaveProperty('password');
+  });
+
+  it('deve fazer hash da nova senha ao atualizar', async () => {
+    const bcrypt = require('bcryptjs');
+    (prismaMock.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
+    (prismaMock.user.update as jest.Mock).mockResolvedValue(mockUser);
+
+    await updateUser('uuid-123', { password: 'novaSenha123' });
+
+    expect(bcrypt.hash).toHaveBeenCalledWith('novaSenha123', 10);
+    expect(prismaMock.user.update).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ password: 'hashed_password' }) }),
+    );
+  });
+
+  it('não deve fazer hash quando senha não for fornecida', async () => {
+    const bcrypt = require('bcryptjs');
+    (prismaMock.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
+    (prismaMock.user.update as jest.Mock).mockResolvedValue(mockUser);
+
+    await updateUser('uuid-123', { name: 'Novo Nome' });
+
+    expect(bcrypt.hash).not.toHaveBeenCalled();
   });
 
   it('deve lançar NotFoundException quando usuário não existir', async () => {
